@@ -28,7 +28,6 @@ class ImageWithBase64DataModel(BaseModel):
             size=image_doc["size"],
             image_data=image_doc["image_data"] if image_doc.get("image_data") else None
         )
-    
 
 class InspectionModel(BaseModel):
     original_image: Optional[ImageWithBase64DataModel]

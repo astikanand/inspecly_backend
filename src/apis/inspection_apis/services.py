@@ -1,20 +1,17 @@
-import base64
 from datetime import datetime
-from http.client import HTTPException
-from typing import List, Optional
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from typing import Optional
 
 from bson import ObjectId
+from fastapi import HTTPException, UploadFile
 from fastapi.encoders import jsonable_encoder
 from motor.motor_asyncio import AsyncIOMotorDatabase as AsyncIOMotorDB
 
-
 from apis.inspection_apis.formatter import format_inspection_data
-
-from apis.inspection_apis.models import InspectionModel, ImageWithBase64DataModel, InspectionUpdateModel
+from apis.inspection_apis.models import (ImageWithBase64DataModel,
+                                         InspectionModel,
+                                         InspectionUpdateModel)
 from apis.utils.custom_logger import get_logger
 from config.setup import app_settings
-
 from image_services.nut_bolt_alignment_check import get_alignment_checked_image
 
 logger = get_logger(__name__)
@@ -23,7 +20,7 @@ logger = get_logger(__name__)
 class InspectionService:
     @staticmethod
     async def get_inspection_from_db(db: AsyncIOMotorDB, inspection_id: str) -> dict:
-        logger.info(f"Get inspection date with id - {inspection_id} from db")
+        logger.info("Get inspection date with id: %s from db", inspection_id)
 
         if found_inspection := await db[app_settings.INSPECTIOIN_COLLECTION].find_one({"_id": ObjectId(inspection_id)}):
             return format_inspection_data(found_inspection)
@@ -64,7 +61,7 @@ class InspectionService:
         )
 
         await db[app_settings.INSPECTIOIN_COLLECTION].update_one(
-            {"_id": ObjectId(new_inspection.inserted_id)}, 
+            {"_id": ObjectId(new_inspection.inserted_id)},
             {"$set": jsonable_encoder(updated_inspection_data)}
         )
 
@@ -75,12 +72,16 @@ class InspectionService:
 
 
     @staticmethod
-    async def update_inspection(db: AsyncIOMotorDB, inspection_id: str, status: Optional[int] = None, processed_file: Optional[UploadFile] = None) -> InspectionModel:
+    async def update_inspection(
+        db: AsyncIOMotorDB,
+        inspection_id: str,
+        status: Optional[int] = None,
+        processed_file: Optional[UploadFile] = None) -> InspectionModel:
         update_data = {"updated": datetime.now()}
 
         if status is not None:
             update_data["inspection_status"] = status
-        
+
         if processed_file:
             processed_image_data = await processed_file.read()
             processed_image_doc = {
@@ -98,12 +99,13 @@ class InspectionService:
             raise HTTPException(status_code=404, detail="Inspection not found")
 
         # Return the updated inspection
-        return await InspectionService.get_inspection(inspection_id)
+        updated_inspection = await db[app_settings.INSPECTIOIN_COLLECTION].find_one({"_id": ObjectId(inspection_id)})
+        return format_inspection_data(updated_inspection)
 
     @staticmethod
     async def delete_inspection(db: AsyncIOMotorDB, inspection_id: str):
         result = await db[app_settings.INSPECTIOIN_COLLECTION].delete_one({"inspection_id": inspection_id})
-        
+
         if result.deleted_count == 1:
             return {"detail": "Inspection deleted successfully"}
 
