@@ -1,0 +1,11 @@
+[MESSAGES CONTROL]
+disable=
+    C0114,  # Missing module docstring
+    C0115,  # Missing class docstring
+    C0116,  # Missing function or method docstring
+    W0613,  # Unused argument
+    R0903,  # Too few public methods (for small classes)
+    C0103   # Variable name doesn't conform to snake_case naming style
+
+[FORMAT]
+max-line-length=130
