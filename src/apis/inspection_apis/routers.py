@@ -1,8 +1,5 @@
-from typing import Optional
-
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 
-from apis.inspection_apis.models import InspectionModel
 from apis.inspection_apis.services import InspectionService
 from apis.utils.custom_logger import get_logger
 
@@ -34,11 +31,3 @@ async def add_new_inspection(request: Request, file: UploadFile = File(...)):
     except Exception as ex:
         logger.exception("Exception Occurred while creating new inspection: %s", ex)
         raise HTTPException(500, "Unexpected Error occurred while creating new inspection") from ex
-
-@router.put("/inspection/{inspection_id}", response_model=InspectionModel)
-async def update_inspection(inspection_id: str, status: Optional[int] = None, processed_file: Optional[UploadFile] = File(None)):
-    return await InspectionService.update_inspection(inspection_id, status, processed_file)
-
-# @router.delete("/inspection/{inspection_id}")
-# async def delete_inspection(inspection_id: str):
-#     return await InspectionService.delete_inspection(inspection_id)
