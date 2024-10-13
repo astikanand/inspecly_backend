@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import math
 import os
 from pathlib import Path
-from image_services.image_utils import CV2Colors
+from image_services.image_utils import CV2Colors, np_array_to_byte_image
 import base64
 
 
@@ -161,7 +161,7 @@ def get_alignment_checked_image(image_data):
     # plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
     # plt.show()
     
-    return (result_image, total_nut_bolts, aligned_nuts_bolts, misaligned_nuts_bolts, non_marked_nuts_bolts)
+    return (np_array_to_byte_image(result_image), total_nut_bolts, aligned_nuts_bolts, misaligned_nuts_bolts, non_marked_nuts_bolts)
 
 
 # get_alignment_checked_image(image_path)

@@ -27,10 +27,10 @@ class InspectionService:
 
 
     @staticmethod
-    async def create_new_inspection(db: AsyncIOMotorDB, new_inspection_data: UploadFile) -> InspectionModel:
+    async def create_new_inspection(db: AsyncIOMotorDB, file: UploadFile) -> InspectionModel:
         logger.info("Create new inspection in db")
-        original_image_data = await new_inspection_data.read()
-        filename, content_type = new_inspection_data.filename, new_inspection_data.content_type
+        original_image_data = await file.read()
+        filename, content_type = file.filename, file.content_type
 
         new_inspection_data = InspectionModel(
             original_image=ImageWithBase64DataModel.to_image(filename, content_type, original_image_data),
@@ -50,8 +50,9 @@ class InspectionService:
         alignment_result = get_alignment_checked_image(created_inspection["original_image"]["image_data"])
         result_image_data, total_nut_bolts, aligned_nuts_bolts, misaligned_nuts_bolts, non_marked_nuts_bolts  = alignment_result
 
+        new_file_name = filename.split(".")[0] + "_processed.png"
         updated_inspection_data = InspectionUpdateModel(
-            processed_image=ImageWithBase64DataModel.to_image(filename, content_type, result_image_data),
+            processed_image=ImageWithBase64DataModel.to_image(new_file_name, "image/png", result_image_data),
             inspection_status=int(total_nut_bolts == aligned_nuts_bolts),
             total_nuts=total_nut_bolts,
             aligned_nuts=aligned_nuts_bolts,

@@ -10,7 +10,7 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get("/inspection/{inspection_id}", response_model=InspectionModel)
+@router.get("/inspection/{inspection_id}", response_description="Get the Inspection data by Id")
 async def get_inspection(request: Request, inspection_id: str):
     logger.info("Get inspection with id: %s", inspection_id)
 
@@ -23,12 +23,12 @@ async def get_inspection(request: Request, inspection_id: str):
         raise HTTPException(500, "Unexpected Error occurred while getting the user") from ex
 
 
-@router.post("/create-inspection", response_model=InspectionModel)
-async def add_new_inspection(request: Request, new_inspection_data: UploadFile = File(...)):
+@router.post("/create-inspection", response_description="New Inspection Data")
+async def add_new_inspection(request: Request, file: UploadFile = File(...)):
     logger.info("Create new inspection with request data")
 
     try:
-        if created_inspection := await InspectionService.create_new_inspection(request.app.database, new_inspection_data):
+        if created_inspection := await InspectionService.create_new_inspection(request.app.database, file):
             return created_inspection
         raise HTTPException(400, "Error Occurred: Bad request format")
     except Exception as ex:
