@@ -37,25 +37,3 @@ except Exception as e:
         print(f"An unexpected error occurred, Type: {type(e).__name__}, Error: {e}")
 finally:
     print("Training Completed")
-
-# # After training, validate the model
-# print("Validating the model...")
-# val_results = model.val(
-#     data=data_config,
-#     imgsz=640
-# )
-
-# # Print mAP and other validation metrics
-# print(val_results)
-
-# # Test or run inference on new images
-# print(f"Running inference on...")
-# results = model.predict(
-#     source=data_config,
-#     conf = 0.25,
-#     imgsz=640
-# )
-
-# # Display and print the results
-# results.show()
-# results.print()

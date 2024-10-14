@@ -1,21 +1,20 @@
-from ultralytics import YOLO
+import base64
+import math
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import math
-import os
-from pathlib import Path
-from image_services.image_utils import CV2Colors, np_array_to_byte_image
-import base64
+from ultralytics import YOLO
 
+from image_services.image_utils import CV2Colors, np_array_to_byte_image
 
 model = YOLO("./src/ml_services/runs/detect/train/weights/best.pt")
 
 def get_detected_nuts_bolts(image):
     processed_images = model.predict(
-        [image], 
-        conf=0.2, 
-        show_conf=False, 
+        [image],
+        conf=0.2,
+        show_conf=False,
         show_boxes=False,
         show_labels=False
     )
@@ -23,9 +22,9 @@ def get_detected_nuts_bolts(image):
     detected_nuts_bolts = None
     for processed_image in processed_images:
         detected_nuts_bolts = processed_image.boxes
-    
+
     return detected_nuts_bolts
-        
+
 
 def get_safe_coordinates(image, detected_object, scale=0.1):
     image_height, image_width, _ = image.shape
@@ -61,19 +60,19 @@ def are_contours_collinear(center_point, contours, tolerance=0.01):
     if len(contours) < 2:
         return False
 
-    [vx, vy, x, y] = cv2.fitLine(contours[0], cv2.DIST_L2, 0, 0.01, 0.01)
+    [vx, vy, _, _] = cv2.fitLine(contours[0], cv2.DIST_L2, 0, 0.01, 0.01)
     initial_direction = (vx, vy)
-    
+
     for contour in contours:
         # Fit a line to each contour
-        [vx, vy, x, y] = cv2.fitLine(contour, cv2.DIST_L2, 0, 0.01, 0.01)
+        [vx, vy, _, _] = cv2.fitLine(contour, cv2.DIST_L2, 0, 0.01, 0.01)
         direction = (vx, vy)
-        
+
         # Check if the direction vectors are within the tolerance
         if not (np.isclose(direction[0], initial_direction[0], atol=tolerance) and
                 np.isclose(direction[1], initial_direction[1], atol=tolerance)):
             return False
-    
+
     return True
 
 
@@ -84,14 +83,14 @@ def closest_contour_to_point(contours, point):
     for contour in contours:
         # Get the nearest point on the contour to the center
         distance = cv2.pointPolygonTest(contour, point, True)
-        
+
         if distance < 0:
             distance = abs(distance)
 
         if distance < min_dist:
             min_dist = distance
             nearest_contour = contour
-    
+
     return nearest_contour
 
 
@@ -131,13 +130,13 @@ def get_alignment_checked_image(image_data):
         if (len(filtered_contours)) >= 1:
             closest_contour = closest_contour_to_point(filtered_contours, center)
             filtered_contours_final_adjusted.append(closest_contour)
-        
+
         for contour in filtered_contours:
             theta = calculate_contour_angle(contour, center)
 
             if theta < 15:
                 filtered_contours_final_adjusted.append(contour)
-        
+
         colors = CV2Colors.RED
         alignment_text = "Non-Marked"
         if len(filtered_contours_final_adjusted) <= 1:
@@ -156,12 +155,14 @@ def get_alignment_checked_image(image_data):
         cv2.putText(result_image, alignment_text, (x1, yc), cv2.FONT_HERSHEY_SIMPLEX, 1, colors, 2)
         cv2.drawContours(result_image, filtered_contours_final_adjusted, -1, colors, 2)
         cv2.rectangle(result_image, (x1, y1), (x2, y2), colors, thickness=2)
-    
+
     # plt.title('Detected White Paint Marks')
     # plt.imshow(cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB))
     # plt.show()
-    
-    return (np_array_to_byte_image(result_image), total_nut_bolts, aligned_nuts_bolts, misaligned_nuts_bolts, non_marked_nuts_bolts)
-
+    return (
+        np_array_to_byte_image(result_image),
+        total_nut_bolts, aligned_nuts_bolts,
+        misaligned_nuts_bolts, non_marked_nuts_bolts
+    )
 
 # get_alignment_checked_image(image_path)
