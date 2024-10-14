@@ -1,21 +1,20 @@
 # Inspecly Bakckend
-## API Services for Inspecly App
 The app takes image of nuts & bolts with paint marks on it to check if the bolts are tightening/missed.
 It processes the image and gives the output after inspection marking of its alignment.
 
-## Features
+### Features
 - Takes image as input and performs object detection to detect nuts & bolts in image
 - On the detected image checks for white paint marks and applies logic to decide alignment
 - Saves the original image, and inspection image along with inspection details in the DB.
 
-## Prerquisites
+### Prerquisites
 - Python3
 - FastApi (REST APIs)
 - cv2, numpy, matplotlib, PIL (Image Processing)
 - YOLO (ML Object Detection Model)
 - MongoDB (Stores Image Snapshot with Processed Image)
 
-## Getting Started
+### Getting Started
 1. Install all the dependencies preferrably in python virtual environment
 `pip install -r requirements.txt`
 2. Train the YOLO ML Model for object detection
@@ -28,6 +27,7 @@ It processes the image and gives the output after inspection marking of its alig
 4. Update the Configs in config/setup.py
 5. Run the `python main.py` in src
 
-## Access the APIs
+### Access the APIs
 - Access the APIs through Swagger [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs)
 - Additionaly it can be hosted as public APIs using localhost through `ngrok`
+- The Live Endpoints are available at [https://rapid-narwhal-sharply.ngrok-free.app/docs](https://rapid-narwhal-sharply.ngrok-free.app/docs)
