@@ -9,23 +9,36 @@ It processes the image and gives the output after inspection marking of its alig
 
 ### Pre-requisites
 - Python3
-- FastApi (REST APIs)
-- cv2, numpy, matplotlib, PIL (Image Processing)
-- YOLO (ML Object Detection Model)
-- MongoDB (Stores Image Snapshot with Processed Image)
+- FastApi (For REST APIs)
+- cv2, numpy, matplotlib, PIL (For Image Processing)
+- YOLO (For ML Object Detection Model)
+- MongoDB (For Storing Image Snapshot with Processed Image)
 
 ### Getting Started
 1. Install all the dependencies preferrably in python virtual environment
-`pip install -r requirements.txt`
+  `pip install -r requirements.txt`
 2. Train the YOLO ML Model for object detection
-- Currently, trained using `'yolo11n.pt'` and other options are `'yolo11s.pt'`, `'yolo11m.pt'`, `'yolo11l.pt'`, `'yolo11x.pt'`
-- For this need to update the datasets with more images, and annotations.
-- Current datasets present in `ml_services/datasets`
-- Validatae the YOLO Model (currently validated using `"runs/detect/train/weights/best.pt"`)
+  - Currently, trained using `'yolo11n.pt'` and other options are `'yolo11s.pt'`, `'yolo11m.pt'`, `'yolo11l.pt'`, `'yolo11x.pt'`
+  - For this need to update the datasets with more images, and annotations.
+  - Current datasets present in `ml_services/datasets`
+  - Validatae the YOLO Model (currently validated using `"runs/detect/train/weights/best.pt"`)
 3. Use the Best Trained Model for Image detection in Image Services
-- Currently beings using `"runs/detect/train/weights/best.pt"`
+  - Currently beings using `"runs/detect/train/weights/best.pt"`
 4. Update the Configs in config/setup.py
 5. Run the `python main.py` in src
+
+
+### File Structure
+- All the Project code is available in src folder.
+- ml_services: Contains ML Object Detection and Validation using Training, Validation and Test Datasets
+- image_services: Contains Image Processing Logic and Core Logic to check the alignment of nuts & bolts
+- apis: Contains Inspection APIs code
+  - Routers: Contains Routes/Urls/Endpoints/Entrypoints
+  - Services: Contains Core Logic to handle Request & DB Operations
+  - Models: Data Model to store in DB
+  - Formatter to format data front, back
+- core: Contains Server Specific Details
+- config: Contains config required for running backend.
 
 ### Access the APIs
 - Access the APIs through Swagger [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs)
