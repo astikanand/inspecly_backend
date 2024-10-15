@@ -7,7 +7,7 @@ It processes the image and gives the output after inspection marking of its alig
 - On the detected image checks for white paint marks and applies logic to decide alignment
 - Saves the original image, and inspection image along with inspection details in the DB.
 
-### Prerquisites
+### Pre-requisites
 - Python3
 - FastApi (REST APIs)
 - cv2, numpy, matplotlib, PIL (Image Processing)
