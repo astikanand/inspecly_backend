@@ -1,4 +1,4 @@
-# Inspecly Bakckend
+# Inspecly Backend
 The app takes image of nuts & bolts with paint marks on it to check if the bolts are tightening/missed.
 It processes the image and gives the output after inspection marking of its alignment.
 
